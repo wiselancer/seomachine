@@ -66,6 +66,10 @@ rewrites/*
 # Don't ignore context files - these should be committed after customization
 # !context/
 
+# Synced canonical docs pulled from product repos (leadcognition_v2, etc.).
+# These mirror upstream content; never commit them here.
+projects/*/_synced/
+
 # Node modules if using any tools
 node_modules/
 

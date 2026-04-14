@@ -1,0 +1,108 @@
+# Coolify app configuration reference for the SEO Machine dev container.
+#
+# This file is documentation only — Coolify doesn't read it directly. It
+# captures the exact config used when the app was created so deploys are
+# reproducible. Update alongside any Dockerfile.dev changes.
+#
+# Pattern mirrors the existing `claude` dev app on Coolify (which runs the
+# leadcognition_v2 dev container). See docs/COOLIFY-DEPLOY.md for step-by-step.
+
+app:
+  name: seomachine-dev
+  description: SEO Machine — Claude Code remote dev container
+  type: dockerfile
+  source:
+    repository: wiselancer/seomachine
+    branch: main
+    dockerfile_path: docker/Dockerfile.dev
+    build_context: .
+
+runtime:
+  # Tailscale needs NET_ADMIN + tun for userspace networking off.
+  capabilities:
+    - NET_ADMIN
+  devices:
+    - /dev/net/tun
+  # Persist Tailscale state + the workspace between deploys.
+  volumes:
+    - host: /data/seomachine-dev/tailscale
+      container: /var/lib/tailscale
+    - host: /data/seomachine-dev/workspace
+      container: /workspace
+  # SSH is exposed for Coolify's `docker exec` / Tailscale SSH paths.
+  # Direct port 22 binding is only needed if you aren't relying on
+  # Tailscale SSH. Leave unmapped by default.
+  ports: []
+
+env:
+  # ── Required ────────────────────────────────────────────────────────
+  ANTHROPIC_API_KEY:
+    required: true
+    description: Claude Code auth. Used by `claude` CLI inside the container.
+  GITHUB_TOKEN:
+    required: true
+    description: |
+      Fine-grained PAT with read access to wiselancer/leadcognition_v2
+      (for product-doc sync) and read/write on wiselancer/seomachine
+      (for commits/PRs). The entrypoint also accepts `gh auth login`
+      as an alternative, but GITHUB_TOKEN is the zero-interaction path.
+
+  # ── Recommended ─────────────────────────────────────────────────────
+  TS_AUTHKEY:
+    required: false
+    description: Tailscale reusable/ephemeral auth key. Enables `ssh openclaw`.
+  TS_HOSTNAME:
+    required: false
+    default: seomachine-dev
+    description: Tailscale node hostname (what you `ssh` to).
+  GIT_USER_NAME:
+    required: false
+    default: wiselancer
+  GIT_USER_EMAIL:
+    required: false
+  DOTFILES_REPO:
+    required: false
+    description: Optional git URL for personal dotfiles cloned on first boot.
+
+  # ── SEO Machine data-source creds (mirror .env.example) ─────────────
+  # All optional — omit to skip that integration.
+  DATAFORSEO_LOGIN:
+    required: false
+  DATAFORSEO_PASSWORD:
+    required: false
+  GA4_PROPERTY_ID:
+    required: false
+  GSC_SITE_URL:
+    required: false
+  WORDPRESS_URL:
+    required: false
+  WORDPRESS_USER:
+    required: false
+  WORDPRESS_APP_PASSWORD:
+    required: false
+  # GA4 service-account JSON is mounted as a file via Coolify's
+  # "Storages" feature, not injected as an env var. Target path:
+  #   /workspace/seomachine/credentials/ga4-credentials.json
+
+healthcheck:
+  # Entrypoint parks on `tail -f /dev/null`; keep Coolify's TCP
+  # healthcheck off or point it at Tailscale SSH (port 22 inside).
+  type: none
+
+notes: |
+  Reference app (same pattern): `claude` on Coolify
+    uuid:        uo80gow0woco44w4cwsw00wg
+    project:     Dev (ewkgg4ocosccg084kg04kk40)
+    environment: production (jww44wk8wcskcwwwwkcsog8w)
+    image_base:  node:22-slim (via wiselancer/leadcognition_v2:/docker/Dockerfile.dev)
+
+  First-boot behavior:
+    1. Fix /workspace ownership to dev:dev
+    2. gh auth via GITHUB_TOKEN (or existing gh auth)
+    3. Clone wiselancer/seomachine into /workspace/seomachine (if missing)
+    4. Run scripts/sync-product-docs.sh → projects/leadcognition/_synced/
+    5. Bring up Tailscale (if TS_AUTHKEY set)
+    6. Start tmux session `dev` in /workspace/seomachine
+    7. Park on tail -f /dev/null
+
+  Reconnect: `ssh openclaw` (via Tailscale), then `tmux attach -t dev`.
