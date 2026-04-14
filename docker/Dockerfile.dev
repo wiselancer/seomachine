@@ -1,0 +1,93 @@
+# ── Dev Container: SEO Machine + Claude Code + full dev toolchain ────
+# Remote dev environment for SEO research/content work.
+# Mirrors leadcognition_v2/docker/Dockerfile.dev but adds the Python
+# toolchain the SEO Machine commands depend on.
+#
+# Build:
+#   docker build -f docker/Dockerfile.dev -t seomachine-dev .
+#
+# Run (via Coolify; or locally for smoke tests):
+#   docker exec -it -u dev <container> tmux attach -t dev
+#
+FROM node:22-slim
+
+# ── System tools + locale + zsh + Python toolchain ───────────────────
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      git curl vim less jq unzip openssh-client ca-certificates \
+      zsh locales fzf sudo ripgrep \
+      libevent-dev ncurses-dev build-essential bison pkg-config \
+      python3 python3-pip python3-venv python3-dev \
+      libxml2-dev libxslt1-dev \
+    && sed -i 's/^# *\(en_US.UTF-8\)/\1/' /etc/locale.gen \
+    && locale-gen \
+    && ln -sf /usr/bin/python3 /usr/local/bin/python \
+    && rm -rf /var/lib/apt/lists/*
+
+# ── tmux 3.5a (built from source for proper Unicode/Nerd Font support)
+RUN curl -fsSL https://github.com/tmux/tmux/releases/download/3.5a/tmux-3.5a.tar.gz | tar xz -C /tmp \
+    && cd /tmp/tmux-3.5a && ./configure --prefix=/usr/local && make -j$(nproc) && make install \
+    && rm -rf /tmp/tmux-3.5a
+
+# ── Locale + terminal env ──────────────────────────────────────────
+ENV LANG=en_US.UTF-8 \
+    LC_ALL=en_US.UTF-8 \
+    TERM=xterm-256color \
+    PIP_BREAK_SYSTEM_PACKAGES=1 \
+    PYTHONUNBUFFERED=1
+
+# ── Non-root dev user (required for claude --dangerously-skip-permissions) ─
+RUN useradd -m -s /usr/bin/zsh -G sudo dev \
+    && echo 'dev ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers.d/dev \
+    && chmod 0440 /etc/sudoers.d/dev
+
+# ── pnpm ─────────────────────────────────────────────────────────────
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
+# ── Tailscale (direct SSH into container) ────────────────────────────
+RUN curl -fsSL https://pkgs.tailscale.com/stable/debian/bookworm.noarmor.gpg \
+      | tee /usr/share/keyrings/tailscale-archive-keyring.gpg >/dev/null \
+    && curl -fsSL https://pkgs.tailscale.com/stable/debian/bookworm.tailscale-keyring.list \
+      | tee /etc/apt/sources.list.d/tailscale.list \
+    && apt-get update && apt-get install -y --no-install-recommends tailscale \
+    && rm -rf /var/lib/apt/lists/*
+
+# ── GitHub CLI ───────────────────────────────────────────────────────
+RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
+      | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
+    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" \
+      | tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+    && apt-get update && apt-get install -y --no-install-recommends gh \
+    && rm -rf /var/lib/apt/lists/*
+
+# ── git-delta (diff pager) ─────────────────────────────────────────
+RUN arch="$(dpkg --print-architecture)" \
+    && curl -fsSL "https://github.com/dandavison/delta/releases/download/0.18.2/git-delta_0.18.2_${arch}.deb" -o /tmp/delta.deb \
+    && dpkg -i /tmp/delta.deb && rm /tmp/delta.deb
+
+# ── AI Coding CLIs ───────────────────────────────────────────────────
+RUN npm install -g @anthropic-ai/claude-code @openai/codex
+
+# ── Python deps for SEO Machine analytics pipeline ───────────────────
+# Copied standalone so the layer caches; app code lands via volume mount
+# on Coolify (workspace persists between deploys).
+COPY data_sources/requirements.txt /tmp/requirements.txt
+RUN pip3 install --no-cache-dir -r /tmp/requirements.txt \
+    && python3 -c "import nltk; nltk.download('punkt', quiet=True); nltk.download('stopwords', quiet=True); nltk.download('punkt_tab', quiet=True)" \
+    && rm /tmp/requirements.txt
+
+# ── Git defaults ─────────────────────────────────────────────────────
+RUN git config --global init.defaultBranch main \
+    && git config --global pull.rebase false
+
+# ── Entrypoint ───────────────────────────────────────────────────────
+COPY docker/entrypoint-dev.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# ── Workspace (persistent volume) ────────────────────────────────────
+# SEO Machine repo is mounted or cloned into /workspace/seomachine by
+# the entrypoint / Coolify volume config.
+WORKDIR /workspace/seomachine
+
+EXPOSE 22
+
+ENTRYPOINT ["/entrypoint.sh"]
