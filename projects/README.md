@@ -23,8 +23,8 @@ This directory contains SEO Machine context for all projects owned by Semen Petr
 | stormlookup | stormlookup.com | ✅ Core | ❓ TBD |
 | shewell-care | shewell.care | ✅ Core | ❓ TBD |
 | petrenko-cv | petrenko.cv | ✅ Core | ❓ Static |
-| olvia | TBD | ⚠️ TODO | ❓ TBD |
-| stackpass | stackpass.app | ⚠️ TODO | ❓ TBD |
+| olvia | olvia.group | ✅ Core | ❓ TBD (news section active) |
+| stackpass | stackpass.app | ✅ Full | ❓ TBD |
 
 ## Context Files Per Project
 
