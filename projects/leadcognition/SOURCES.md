@@ -20,11 +20,24 @@ container entrypoint runs it automatically on boot.
 | `_synced/docs/BRAND.md` | Brand voice, tone, positioning — source of truth over `context/brand-voice.md` |
 | `_synced/docs/UNIFIED-SEO-STRATEGY.md` | Top-level SEO plan, cluster priorities, keyword themes |
 | `_synced/docs/gtm-strategy.md` | GTM posture, ICP, messaging pillars |
+| `_synced/docs/gtm/free-tools-strategy-2026-04.md` | **THE programmatic SEO strategy** — 10 free-tool evaluations, top-3 picks, implementation sketches. Canonical reference. |
+| `_synced/docs/gtm/*.md` | Other GTM-wide strategy docs (pricing, launches, etc.) |
 | `_synced/docs/research/seo-technical-audit.md` | Current technical SEO findings & gaps |
 | `_synced/docs/research/traffic-acquisition-plan.md` | Paid + organic acquisition playbook |
 | `_synced/docs/research/geo-aeo-aio-optimization.md` | AI/generative-search optimization plan |
 | `_synced/docs/research/icp-and-ux-research.md` | ICP research, UX findings, jobs-to-be-done |
 | `_synced/docs/competitors/*.yaml` | Structured competitor dossiers (Apollo, Clay, Common Room, Koala, Pocus, RB2B, Scarf, etc.) |
+
+## Canonical issues (check before filing new SEO work)
+
+Programmatic SEO strategy is **not** fully captured in the SEO repo's Linear Marketing project — the main issue lives in the Discover Funnel project because it depends on product backend:
+
+- **LC-55** (High, Discover Funnel project) — `/who-uses/:slug`, `/companies-using/:slug`, `/competitors/:slug`, `/devs-behind/:repo-slug` pages — THE canonical programmatic SEO issue
+- **GH #129 / #130 / #131** — Three priority free tools (Repo Intent Score, Ecosystem Snapshot, Weekly Dev Trend Report) from the free-tools strategy doc
+- **GH #85** — Discover Phase E (pre-compute 500 oceans) — enables public trending reports + reverse discovery
+- **LC-65** (Medium, Marketing project) — Public share URLs for Discover preview results — subset of LC-55
+
+**Before creating any new programmatic/SEO-page issue**, grep these and the free-tools-strategy doc to avoid duplicates.
 
 ## Live Landing-Page Inventory
 

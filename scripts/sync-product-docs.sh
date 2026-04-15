@@ -24,6 +24,7 @@ FILES=(
   "docs/UNIFIED-SEO-STRATEGY.md"
   "docs/BRAND.md"
   "docs/gtm-strategy.md"
+  "docs/gtm/free-tools-strategy-2026-04.md"
   "docs/research/seo-technical-audit.md"
   "docs/research/traffic-acquisition-plan.md"
   "docs/research/geo-aeo-aio-optimization.md"
@@ -34,6 +35,7 @@ FILES=(
 # Pairs of "src_dir:glob".
 DIR_GLOBS=(
   "docs/competitors:*.yaml"
+  "docs/gtm:*.md"
 )
 
 ok=0
