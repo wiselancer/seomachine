@@ -6,6 +6,7 @@ This repository was originally structured for Claude Code, but Codex should trea
 
 - The source of truth for project-specific context lives in `projects/<slug>/`.
 - The active working context lives in `context/`.
+- `context/` is generated runtime state. Permanent edits belong in `projects/<slug>/`.
 - Before doing any content work for a specific brand, activate the project with:
 
 ```bash
@@ -53,6 +54,7 @@ Examples:
 ## Repo-Specific Guidance
 
 - `scripts/use_project.py` is the Codex-native replacement for `/use-project`.
+- `context/` is intentionally disposable and should not be treated as committed source-of-truth content.
 - `scripts/sync-product-docs.sh` refreshes authoritative LeadCognition docs into `projects/leadcognition/_synced/`.
 - Python research and SEO analysis entry points live at the repo root and in `data_sources/modules/`.
 - Publishing assumptions come from the active `context/config.md`. Do not assume WordPress is available for every project.

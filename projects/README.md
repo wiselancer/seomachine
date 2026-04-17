@@ -20,7 +20,7 @@ python3 scripts/use_project.py --list
 | Project | Domain | Context Ready | CMS Configured |
 |---------|--------|---------------|----------------|
 | leadcognition | leadcognition.io | ✅ Full | ❌ No blog yet |
-| fruitfulcode | fruitfulcode.com | ✅ Core | ❓ Confirm WP |
+| fruitfulcode | fruitfulcode.com | ✅ Full | ✅ Netlify site with live blog routes |
 | stormlookup | stormlookup.com | ✅ Core | ❓ TBD |
 | shewell-care | shewell.care | ✅ Core | ❓ TBD |
 | petrenko-cv | petrenko.cv | ✅ Core | ❓ Static |
@@ -44,6 +44,10 @@ Each project directory should contain:
 ## _shared/
 
 `_shared/seo-guidelines.md` contains universal SEO formatting rules (structure, meta elements, AI search optimization). The `/use-project` command copies this to `context/seo-guidelines.md` unless a project-specific override exists.
+
+## context/
+
+`context/` is generated active-project state. Edit `projects/<slug>/` first, then reload into `context/` with `/use-project <slug>` or `python3 scripts/use_project.py <slug>`.
 
 ## Updating a Project
 

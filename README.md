@@ -20,6 +20,7 @@ This repo now works cleanly with Codex as well as Claude Code.
 - Use [AGENTS.md](AGENTS.md) as the Codex-native operating guide.
 - Use `python3 scripts/use_project.py <slug>` instead of Claude's `/use-project`.
 - Treat `.claude/commands/*.md` as workflow specs and `.claude/agents/*.md` as specialist QA checklists.
+- Treat `projects/<slug>/` as the source of truth and `context/` as generated active-project state.
 - Keep using the same output directories (`research/`, `drafts/`, `rewrites/`, `published/`) so the repo stays tool-agnostic.
 
 Example:
@@ -61,20 +62,28 @@ This installs:
 claude-code .
 ```
 
-4. **Customize Context Files** (Important!):
+4. **Customize Project Context** (Important!):
 
-   All context files are provided as templates. Fill them out with your company's information:
+   Edit the source-of-truth files in `projects/<slug>/`, then activate that project into `context/`.
 
-   - `context/brand-voice.md` - Define your brand voice and messaging *(see examples/castos/ for reference)*
-   - `context/writing-examples.md` - Add 3-5 exemplary blog posts from your site
-   - `context/features.md` - List your product/service features and benefits
-   - `context/internal-links-map.md` - Map your key pages for internal linking
-   - `context/style-guide.md` - Fill in your style preferences
-   - `context/target-keywords.md` - Add your keyword research and topic clusters
-   - `context/competitor-analysis.md` - Add competitor analysis and insights
-   - `context/seo-guidelines.md` - Review and adjust SEO requirements
+   Example:
 
-   **Quick Start**: Check out `examples/castos/` to see a complete real-world example of all context files filled out for a podcast hosting SaaS company.
+   ```bash
+   python3 scripts/use_project.py fruitfulcode
+   ```
+
+   Typical files to maintain per project:
+
+   - `projects/<slug>/brand-voice.md` - define your brand voice and messaging
+   - `projects/<slug>/writing-examples.md` - add exemplary posts or page copy
+   - `projects/<slug>/features.md` - list product/service features and benefits
+   - `projects/<slug>/internal-links-map.md` - map key pages for internal linking
+   - `projects/<slug>/style-guide.md` - capture formatting and terminology rules
+   - `projects/<slug>/target-keywords.md` - store keyword targets and topic clusters
+   - `projects/<slug>/competitor-analysis.md` - record competitor angles and gaps
+   - `projects/_shared/seo-guidelines.md` - shared SEO baseline, unless overridden by a project-specific file
+
+   `context/` is generated active-project state and should not be treated as the permanent source of truth.
 
 ## Workflows
 

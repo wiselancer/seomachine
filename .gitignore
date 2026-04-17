@@ -63,8 +63,9 @@ published/*
 rewrites/*
 !rewrites/.gitkeep
 
-# Don't ignore context files - these should be committed after customization
-# !context/
+# Active project context is generated from projects/<slug>/ and should not be committed
+context/*
+!context/.gitkeep
 
 # Synced canonical docs pulled from product repos (leadcognition_v2, etc.).
 # These mirror upstream content; never commit them here.

@@ -13,6 +13,21 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 PROJECTS_DIR = REPO_ROOT / "projects"
 CONTEXT_DIR = REPO_ROOT / "context"
 SHARED_SEO_GUIDELINES = PROJECTS_DIR / "_shared" / "seo-guidelines.md"
+MANAGED_CONTEXT_FILES = {
+    "SOURCES.md",
+    "ai-citation-targets.md",
+    "brand-voice.md",
+    "competitor-analysis.md",
+    "config.md",
+    "cro-best-practices.md",
+    "features.md",
+    "internal-links-map.md",
+    "reddit-strategy.md",
+    "seo-guidelines.md",
+    "style-guide.md",
+    "target-keywords.md",
+    "writing-examples.md",
+}
 PROJECT_DISPLAY_ORDER = [
     "leadcognition",
     "fruitfulcode",
@@ -132,6 +147,11 @@ def activate_project(slug: str) -> int:
         return 1
 
     CONTEXT_DIR.mkdir(exist_ok=True)
+
+    for filename in MANAGED_CONTEXT_FILES:
+        candidate = CONTEXT_DIR / filename
+        if candidate.exists():
+            candidate.unlink()
 
     copied: list[str] = []
     for path in sorted(project_dir.iterdir()):
