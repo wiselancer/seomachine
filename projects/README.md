@@ -5,13 +5,14 @@ This directory contains SEO Machine context for all projects owned by Semen Petr
 ## How to Use
 
 ```
-/use-project leadcognition    # Switch to LeadCognition
-/use-project fruitfulcode     # Switch to Fruitful Code  
-/use-project stormlookup      # Switch to StormLookup
-/use-project shewell-care     # Switch to Shewell.care
-/use-project petrenko-cv      # Switch to personal CV/portfolio
-/use-project olvia            # Switch to Olvia (fill in context first)
-/use-project stackpass        # Switch to StackPass (fill in context first)
+python3 scripts/use_project.py leadcognition   # Codex / shell workflow
+/use-project leadcognition                     # Claude Code workflow
+```
+
+Available slugs:
+
+```
+python3 scripts/use_project.py --list
 ```
 
 ## Project Status
@@ -47,5 +48,5 @@ Each project directory should contain:
 ## Updating a Project
 
 1. Edit the relevant file in `projects/<slug>/`
-2. Re-run `/use-project <slug>` to reload into `context/`
+2. Re-run `/use-project <slug>` or `python3 scripts/use_project.py <slug>` to reload into `context/`
 3. All commands will pick up the changes automatically

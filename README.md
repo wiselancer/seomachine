@@ -13,6 +13,23 @@ SEO Machine is built on Claude Code and provides:
 - **Context-Driven**: Brand voice, style guide, SEO guidelines, and examples guide all content
 - **Workflow Organization**: Structured directories for topics, research, drafts, and published content
 
+## Using with Codex
+
+This repo now works cleanly with Codex as well as Claude Code.
+
+- Use [AGENTS.md](AGENTS.md) as the Codex-native operating guide.
+- Use `python3 scripts/use_project.py <slug>` instead of Claude's `/use-project`.
+- Treat `.claude/commands/*.md` as workflow specs and `.claude/agents/*.md` as specialist QA checklists.
+- Keep using the same output directories (`research/`, `drafts/`, `rewrites/`, `published/`) so the repo stays tool-agnostic.
+
+Example:
+
+```bash
+python3 scripts/use_project.py leadcognition
+```
+
+After activating a project, Codex can read `context/` plus the relevant `.claude/commands/*.md` file and execute the work directly without relying on slash-command support.
+
 ## Getting Started
 
 ### Prerequisites
