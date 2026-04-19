@@ -9,9 +9,30 @@ SEO Machine is built on Claude Code and provides:
 - **Specialized Agents**: Content analyzer, SEO optimization, meta element creation, internal linking, keyword mapping, editor, performance analysis, headline generator, CRO analyst, landing page optimizer
 - **Marketing Skills**: 26 marketing skills for copywriting, CRO, A/B testing, email sequences, pricing strategy, and more
 - **Advanced SEO Analysis**: Search intent detection, keyword density & clustering, content length comparison, readability scoring, SEO quality rating (0-100)
-- **Data Integrations**: Google Analytics 4, Google Search Console, DataForSEO for real-time performance insights
+- **Data Integrations**: Google Analytics 4, Google Search Console (DataForSEO module exists but no longer in active use — see "Day-to-day SEO orchestration" below)
 - **Context-Driven**: Brand voice, style guide, SEO guidelines, and examples guide all content
 - **Workflow Organization**: Structured directories for topics, research, drafts, and published content
+
+## Day-to-day SEO orchestration — use the global `seo` skill
+
+As of 2026-04-18, the user-facing entry point for SEO/GEO work is the global Claude Code skill at `~/.claude/skills/seo/`, NOT this repo's slash commands directly.
+
+The `seo` skill provides:
+- **6 workflows** (improve_page, traffic_opportunities, ai_visibility, research_keyword, competitor_deep_dive, off_page_seo)
+- **10 scripts** for orchestrated data collection (ai_visibility, page_snapshot, seo_audit, gsc_query, serp_top10, spyfu_domain, searchatlas_domain, backlink_gap, brand_mentions, review_presence)
+- **7 method references** (Princeton GEO, content extractability, schema patterns, AI crawler access, platforms, programmatic SEO patterns, off-page tactics)
+
+This repo (`seomachine`) remains the **content engine and data layer**:
+- Python modules in `data_sources/modules/` (NLP, scoring, GSC integration)
+- Project-specific context (`projects/<slug>/`, `context/`)
+- Long-form drafting workflows (`drafts/`, `rewrites/`, `published/`)
+- WordPress publishing pipeline
+
+The `seo` skill **calls into this repo's helpers** when needed (e.g., the skill's `gsc_query.py` reads credentials from `~/dev/martech/seomachine/credentials/gsc-credentials.json`). They're complementary, not competing.
+
+**Mental model**: `seo` skill = orchestration + intent routing + ToolSuite/Serper data sources. `seomachine` = content production engine + own-site analytics integration.
+
+If you're inside this repo writing/optimizing content, the slash commands (`/research`, `/write`, etc.) are still the right tools. If you're in any other directory and need an SEO audit, traffic plan, or off-page push for a domain, the `seo` skill is the entry point.
 
 ## Using with Codex
 
